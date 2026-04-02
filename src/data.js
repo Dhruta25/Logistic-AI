@@ -1,7 +1,3 @@
-// ============================================
-// LogiFlow AI — Mock Data (India Localized)
-// ============================================
-
 export const kpiData = [
   { id: 'active-loads', label: 'Active Loads', value: '247', icon: 'fas fa-box', trend: '+12%', trendDir: 'up', color: 'green' },
   { id: 'ontime', label: 'On-time %', value: '94.2%', icon: 'fas fa-clock', trend: '+2.1%', trendDir: 'up', color: 'blue' },

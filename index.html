@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogiFlow AI — Intelligent Logistics Dashboard</title>
+  <meta name="description" content="AI-powered logistics management platform for real-time fleet tracking, dispatch optimization, and intelligent operations across India." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">
+          <i class="fas fa-truck-fast"></i>
+        </div>
+        <span class="logo-text">LogiFlow<span class="logo-ai">AI</span></span>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar-sm">DM</div>
+          <div class="user-info-sm">
+            <span class="user-name-sm">Dhruta M.</span>
+            <span class="user-role-sm">Admin</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="top-navbar" id="topNavbar">
+        <div class="navbar-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search loads, drivers, vehicles..." id="globalSearch" />
+          </div>
+        </div>
+        <div class="navbar-right">
+          <div class="nav-filter">
+            <i class="fas fa-calendar"></i>
+            <select id="dateFilter">
+              <option>Today</option>
+              <option>This Week</option>
+              <option>This Month</option>
+              <option>Custom Range</option>
+            </select>
+          </div>
+          <div class="nav-filter">
+            <i class="fas fa-map-marker-alt"></i>
+            <select id="locationFilter">
+              <option>All Locations</option>
+              <option>North India</option>
+              <option>South India</option>
+              <option>West India</option>
+              <option>East India</option>
+            </select>
+          </div>
+          <button class="nav-icon-btn" id="notifBtn">
+            <i class="fas fa-bell"></i>
+            <span class="notif-badge">5</span>
+          </button>
+          <div class="nav-user-profile" id="userProfile">
+            <div class="user-avatar">DM</div>
+            <span class="user-name">Dhruta M.</span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </div>
+      </header>
+      <div class="page-content" id="pageContent">
+        <!-- Dynamic content rendered here -->
+      </div>
+    </main>
+  </div>
+  <div id="slidePanel" class="slide-panel"></div>
+  <div id="overlay" class="overlay"></div>
+  <div id="toast-container" class="toast-container"></div>
+  <!-- Modal for View actions -->
+  <div id="viewModal" class="view-modal-overlay" style="display:none">
+    <div class="view-modal">
+      <div class="view-modal-header">
+        <span class="view-modal-title"></span>
+        <button class="view-modal-close" id="viewModalClose"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="view-modal-body"></div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,6 +1,4 @@
-// ============================================
-// LogiFlow AI — Main Application Controller
-// ============================================
+
 import './style.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -13,7 +11,6 @@ import {
 } from './pages.js';
 import { ordersData, mapVehicles, fleetData, invoicesData, driversData, routesData } from './data.js';
 
-// Fix Leaflet default marker icon issue with bundlers
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -23,24 +20,14 @@ L.Icon.Default.mergeOptions({
 
 // --- Navigation Configuration ---
 const navItems = [
-  { key: 'dashboard', icon: 'fas fa-chart-pie', label: 'Dashboard' },
-  { key: 'orders', icon: 'fas fa-boxes-stacked', label: 'Orders / Loads', badge: '10' },
-  { divider: true, label: 'Operations' },
-  { key: 'dispatch', icon: 'fas fa-clipboard-check', label: 'Dispatch Board' },
+  { key: 'dashboard', icon: 'fas fa-th-large', label: 'Dashboard' },
   { key: 'fleet', icon: 'fas fa-truck-moving', label: 'Fleet' },
-  { key: 'drivers', icon: 'fas fa-id-card', label: 'Drivers' },
-  { key: 'routes', icon: 'fas fa-route', label: 'Routes & Tracking' },
-  { key: 'warehouses', icon: 'fas fa-warehouse', label: 'Warehouses / Hubs' },
-  { divider: true, label: 'Documents' },
-  { key: 'pod', icon: 'fas fa-file-circle-check', label: 'Proof of Delivery' },
-  { key: 'billing', icon: 'fas fa-file-invoice-dollar', label: 'Billing & Invoices' },
-  { key: 'reports', icon: 'fas fa-chart-bar', label: 'Reports' },
-  { divider: true, label: 'Intelligence' },
-  { key: 'ai-ops', icon: 'fas fa-wand-magic-sparkles', label: 'AI Ops Assistant', badge: '6', badgeClass: 'ai' },
+  { key: 'routes', icon: 'fas fa-route', label: 'Routes' },
+  { key: 'orders', icon: 'fas fa-boxes-stacked', label: 'Shipments', badge: '10' },
+  { key: 'reports', icon: 'fas fa-chart-area', label: 'Analytics' },
   { key: 'settings', icon: 'fas fa-gear', label: 'Settings' },
 ];
 
-// --- Page renderers map ---
 const pageRenderers = {
   dashboard: renderDashboard,
   orders: renderOrders,
@@ -56,11 +43,9 @@ const pageRenderers = {
   settings: renderSettings,
 };
 
-// --- State ---
 let currentPage = 'dashboard';
 let mapInstances = {};
 
-// --- Build Sidebar Navigation ---
 function buildSidebar() {
   const nav = document.getElementById('sidebarNav');
   nav.innerHTML = navItems.map(item => {
@@ -87,12 +72,10 @@ function buildSidebar() {
   });
 }
 
-// --- Navigate ---
 function navigateTo(page) {
   currentPage = page;
 
-  // Cleanup old map instances
-  Object.values(mapInstances).forEach(m => { try { m.remove(); } catch(e) {} });
+  Object.values(mapInstances).forEach(m => { try { m.remove(); } catch (e) { } });
   mapInstances = {};
 
   document.querySelectorAll('.nav-item').forEach(el => {
@@ -121,9 +104,6 @@ function navigateTo(page) {
   document.getElementById('overlay').classList.remove('active');
 }
 
-// ============================================
-// LEAFLET MAP — Dashboard
-// ============================================
 function initDashboardMap() {
   const mapEl = document.getElementById('dashboardMap');
   if (!mapEl) return;
@@ -133,28 +113,28 @@ function initDashboardMap() {
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
-    maxZoom: 18,
+    maxZoom: 19,
   }).addTo(map);
 
   const statusColors = {
-    'on-time': '#10B981',
-    'delayed': '#F59E0B',
-    'critical': '#EF4444',
+    'on-time': '#818CF8',
+    'delayed': '#FBBF24',
+    'critical': '#F87171',
   };
 
   mapVehicles.forEach(v => {
     const marker = L.circleMarker([v.lat, v.lng], {
       radius: 8,
       fillColor: statusColors[v.status],
-      color: '#fff',
+      color: 'rgba(255,255,255,0.6)',
       weight: 2,
       fillOpacity: 0.9,
     }).addTo(map);
 
     marker.bindPopup(`
-      <div style="font-family:Inter,sans-serif;min-width:140px">
+      <div style="font-family:Inter,sans-serif;min-width:140px;color:#E8EAF0">
         <div style="font-weight:700;font-size:14px;margin-bottom:4px">${v.label}</div>
-        <div style="font-size:12px;color:#666;margin-bottom:4px">${v.info}</div>
+        <div style="font-size:12px;color:#8B92A8;margin-bottom:4px">${v.info}</div>
         <span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:${statusColors[v.status]}22;color:${statusColors[v.status]}">${v.status.replace('-', ' ').toUpperCase()}</span>
       </div>
     `);
@@ -162,15 +142,15 @@ function initDashboardMap() {
 
   // Add legend
   const legend = L.control({ position: 'bottomleft' });
-  legend.onAdd = function() {
+  legend.onAdd = function () {
     const div = L.DomUtil.create('div', 'leaflet-legend');
     div.innerHTML = `
-      <div style="background:rgba(255,255,255,0.95);padding:10px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15);font-family:Inter,sans-serif;font-size:11px">
+      <div style="background:rgba(15,18,32,0.85);backdrop-filter:blur(12px);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);font-family:Inter,sans-serif;font-size:11px;color:#E8EAF0">
         <div style="font-weight:700;margin-bottom:6px;font-size:12px">Vehicle Status</div>
         <div style="display:flex;gap:12px">
-          <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#10B981"></div>On Time</div>
-          <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#F59E0B"></div>Delayed</div>
-          <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#EF4444"></div>Critical</div>
+          <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#818CF8"></div>On Time</div>
+          <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#FBBF24"></div>Delayed</div>
+          <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#F87171"></div>Critical</div>
         </div>
       </div>
     `;
@@ -181,9 +161,6 @@ function initDashboardMap() {
   setTimeout(() => map.invalidateSize(), 200);
 }
 
-// ============================================
-// LEAFLET MAP — Routes
-// ============================================
 function initRoutesMap() {
   const mapEl = document.getElementById('routesMap');
   if (!mapEl) return;
@@ -193,7 +170,7 @@ function initRoutesMap() {
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
-    maxZoom: 18,
+    maxZoom: 19,
   }).addTo(map);
 
   const routeCoords = [
@@ -204,7 +181,7 @@ function initRoutesMap() {
     { origin: [23.0225, 72.5714], dest: [21.1702, 72.8311], status: 'on-time', label: 'RT-005: Ahmedabad → Surat' },
   ];
 
-  const colors = { 'on-time': '#10B981', 'delayed': '#EF4444' };
+  const colors = { 'on-time': '#818CF8', 'delayed': '#EC4899' };
 
   routeCoords.forEach(r => {
     L.polyline([r.origin, r.dest], {
@@ -214,8 +191,8 @@ function initRoutesMap() {
       dashArray: r.status === 'delayed' ? '8, 4' : null,
     }).addTo(map).bindPopup(`<b>${r.label}</b>`);
 
-    L.circleMarker(r.origin, { radius: 6, fillColor: '#10B981', color: '#fff', weight: 2, fillOpacity: 1 }).addTo(map);
-    L.circleMarker(r.dest, { radius: 6, fillColor: '#EF4444', color: '#fff', weight: 2, fillOpacity: 1 }).addTo(map);
+    L.circleMarker(r.origin, { radius: 6, fillColor: '#818CF8', color: '#fff', weight: 2, fillOpacity: 1 }).addTo(map);
+    L.circleMarker(r.dest, { radius: 6, fillColor: '#EC4899', color: '#fff', weight: 2, fillOpacity: 1 }).addTo(map);
   });
 
   setTimeout(() => map.invalidateSize(), 200);
@@ -248,7 +225,6 @@ function initButtonHandlers(page) {
   bindClick('btnSaveSettings', () => { showToast('Settings saved successfully!', 'success'); });
   bindClick('viewAllDispatch', () => navigateTo('dispatch'));
 
-  // --- Invoice View/Download buttons ---
   document.querySelectorAll('.btn-view-invoice').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -370,9 +346,6 @@ function bindClick(id, handler) {
   if (el) el.addEventListener('click', handler);
 }
 
-// ============================================
-// FILTER ORDERS TABLE
-// ============================================
 function filterOrdersTable() {
   const status = document.getElementById('filterStatus')?.value || '';
   const customer = document.getElementById('filterCustomer')?.value || '';
@@ -403,9 +376,6 @@ function toggleFilters() {
   }
 }
 
-// ============================================
-// CSV EXPORT
-// ============================================
 function exportTableCSV(data, keys, filename) {
   const header = keys.join(',');
   const rows = data.map(item => keys.map(k => `"${String(item[k] || '').replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -421,9 +391,6 @@ function exportTableCSV(data, keys, filename) {
   showToast(`Downloaded ${filename}`, 'success');
 }
 
-// ============================================
-// PDF EXPORTS
-// ============================================
 function exportDashboardPDF() {
   const doc = new jsPDF();
   doc.setFont('helvetica', 'bold');
@@ -657,9 +624,6 @@ function exportReportsCSV() {
   exportTableCSV(data, ['day', 'ontime'], 'performance_report.csv');
 }
 
-// ============================================
-// FORM MODALS
-// ============================================
 function showFormModal(title, formHtml) {
   showViewModal(title, `
     <div style="padding:20px">
@@ -670,8 +634,6 @@ function showFormModal(title, formHtml) {
       </div>
     </div>
   `);
-
-  // Add save button handler
   const saveBtn = document.querySelector('#viewModal .btn-primary');
   if (saveBtn) {
     saveBtn.onclick = () => {
@@ -898,7 +860,6 @@ function openOrderPanel(order) {
     showToast(`Downloaded order ${order.id} as PDF`, 'success');
   });
 
-  // Track on Map
   document.getElementById('btnTrackOrder')?.addEventListener('click', () => {
     closePanel();
     navigateTo('routes');
@@ -911,9 +872,6 @@ function closePanel() {
   document.getElementById('overlay').classList.remove('active');
 }
 
-// ============================================
-// KANBAN DRAG & DROP
-// ============================================
 function initKanbanDragDrop() {
   const cards = document.querySelectorAll('.kanban-card');
   const columns = document.querySelectorAll('.kanban-cards');
@@ -964,9 +922,6 @@ function getDragAfterElement(container, y) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-// ============================================
-// POD UPLOAD
-// ============================================
 function initPODUpload() {
   const area = document.getElementById('uploadArea');
   const fileInput = document.getElementById('fileInput');
@@ -998,9 +953,6 @@ function initPODUpload() {
   }
 }
 
-// ============================================
-// CHART BAR ANIMATION
-// ============================================
 function animateChartBars() {
   document.querySelectorAll('.chart-bar').forEach(bar => {
     const height = bar.style.height;
@@ -1009,9 +961,6 @@ function animateChartBars() {
   });
 }
 
-// ============================================
-// TOAST NOTIFICATIONS
-// ============================================
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
   const icons = { success: 'fas fa-check-circle', warning: 'fas fa-exclamation-triangle', error: 'fas fa-times-circle', info: 'fas fa-info-circle' };
@@ -1022,9 +971,6 @@ function showToast(message, type = 'info') {
   setTimeout(() => toast.remove(), 3500);
 }
 
-// ============================================
-// MOBILE MENU TOGGLE
-// ============================================
 function initMobileMenu() {
   document.getElementById('menuToggle').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
@@ -1032,18 +978,12 @@ function initMobileMenu() {
   });
 }
 
-// ============================================
-// NOTIFICATION BUTTON
-// ============================================
 function initNotifications() {
   document.getElementById('notifBtn').addEventListener('click', () => {
     showToast('5 new notifications', 'info');
   });
 }
 
-// ============================================
-// GLOBAL SEARCH
-// ============================================
 function initGlobalSearch() {
   const search = document.getElementById('globalSearch');
   search.addEventListener('keyup', (e) => {
@@ -1053,9 +993,6 @@ function initGlobalSearch() {
   });
 }
 
-// ============================================
-// REAL-TIME SIMULATION
-// ============================================
 function startRealTimeSimulation() {
   setInterval(() => {
     const badge = document.querySelector('.notif-badge');
@@ -1066,9 +1003,6 @@ function startRealTimeSimulation() {
   }, 15000);
 }
 
-// ============================================
-// INITIALIZE APPLICATION
-// ============================================
 function init() {
   buildSidebar();
   navigateTo('dashboard');
@@ -1078,7 +1012,7 @@ function init() {
   startRealTimeSimulation();
 
   setTimeout(() => {
-    showToast('Welcome back, Dhruta! 5 new alerts.', 'info');
+    showToast('Welcome back, Alex! 5 new alerts.', 'info');
   }, 1000);
 }
 

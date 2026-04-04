@@ -3,32 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LogiFlow AI — Intelligent Logistics Dashboard</title>
-  <meta name="description" content="AI-powered logistics management platform for real-time fleet tracking, dispatch optimization, and intelligent operations across India." />
+  <title>Aether Logistics — AI-Powered Logistics Dashboard</title>
+  <meta name="description" content="Next-generation AI-powered logistics SaaS dashboard with real-time fleet tracking, route optimization, shipment management, and intelligent analytics." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔷</text></svg>" />
 </head>
 <body>
   <div id="app">
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-logo">
         <div class="logo-icon">
-          <i class="fas fa-truck-fast"></i>
+          <i class="fas fa-diamond"></i>
         </div>
-        <span class="logo-text">LogiFlow<span class="logo-ai">AI</span></span>
+        <span class="logo-text">AETHER<span class="logo-highlight">LOGISTICS</span></span>
       </div>
       <nav class="sidebar-nav" id="sidebarNav"></nav>
       <div class="sidebar-footer">
         <div class="sidebar-user">
-          <div class="user-avatar-sm">DM</div>
+          <div class="user-avatar-sm">AV</div>
           <div class="user-info-sm">
-            <span class="user-name-sm">Dhruta M.</span>
-            <span class="user-role-sm">Admin</span>
+            <span class="user-name-sm">Alex Volkov</span>
+            <span class="user-role-sm">Fleet Manager</span>
           </div>
+          <i class="fas fa-chevron-down" style="color:rgba(255,255,255,0.3);font-size:10px;margin-left:auto"></i>
         </div>
       </div>
     </aside>
@@ -40,37 +41,26 @@
           </button>
           <div class="search-box">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search loads, drivers, vehicles..." id="globalSearch" />
+            <input type="text" placeholder="Global Search..." id="globalSearch" />
+            <span class="search-shortcut">⌘K</span>
           </div>
         </div>
         <div class="navbar-right">
-          <div class="nav-filter">
-            <i class="fas fa-calendar"></i>
-            <select id="dateFilter">
-              <option>Today</option>
-              <option>This Week</option>
-              <option>This Month</option>
-              <option>Custom Range</option>
-            </select>
-          </div>
-          <div class="nav-filter">
-            <i class="fas fa-map-marker-alt"></i>
-            <select id="locationFilter">
-              <option>All Locations</option>
-              <option>North India</option>
-              <option>South India</option>
-              <option>West India</option>
-              <option>East India</option>
-            </select>
-          </div>
-          <button class="nav-icon-btn" id="notifBtn">
+          <button class="nav-icon-btn" id="notifBtn" title="Notifications">
             <i class="fas fa-bell"></i>
             <span class="notif-badge">5</span>
           </button>
+          <button class="nav-icon-btn" title="Messages">
+            <i class="fas fa-envelope"></i>
+            <span class="notif-badge msg-badge">3</span>
+          </button>
           <div class="nav-user-profile" id="userProfile">
-            <div class="user-avatar">DM</div>
-            <span class="user-name">Dhruta M.</span>
-            <i class="fas fa-chevron-down"></i>
+            <div class="user-avatar">AV</div>
+            <div class="user-info-nav">
+              <span class="user-name">Alex Volkov</span>
+              <span class="user-role-nav">Fleet Manager</span>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size:10px;opacity:0.5"></i>
           </div>
         </div>
       </header>

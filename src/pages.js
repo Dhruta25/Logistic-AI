@@ -1,13 +1,9 @@
-// ============================================
-// LogiFlow AI — Page Renderers (India Edition)
-// ============================================
 import {
   kpiData, mapVehicles, dispatchList, ordersData, kanbanData,
   fleetData, driversData, routesData, warehousesData,
   podData, invoicesData, aiRecommendations, settingsConfig
 } from './data.js';
 
-// --- Helpers ---
 function badge(text, type) {
   return `<span class="badge badge-${type} badge-dot">${text}</span>`;
 }
@@ -30,9 +26,6 @@ function healthBar(val) {
   return `<div class="progress-bar" style="width:100px"><div class="progress-fill ${color}" style="width:${val}%"></div></div>`;
 }
 
-// ============================================
-// DASHBOARD
-// ============================================
 export function renderDashboard() {
   const kpis = kpiData.map(k => `
     <div class="kpi-card ${k.color}">
@@ -94,9 +87,6 @@ export function renderDashboard() {
   `;
 }
 
-// ============================================
-// ORDERS / LOADS
-// ============================================
 export function renderOrders() {
   const rows = ordersData.map(o => `
     <tr data-id="${o.id}" class="order-row">
@@ -156,9 +146,6 @@ export function renderOrders() {
   `;
 }
 
-// ============================================
-// DISPATCH BOARD (KANBAN)
-// ============================================
 export function renderDispatch() {
   function renderColumn(key, title, cards) {
     const cardHtml = cards.map(c => `
@@ -204,9 +191,6 @@ export function renderDispatch() {
   `;
 }
 
-// ============================================
-// FLEET MANAGEMENT
-// ============================================
 export function renderFleet() {
   const summary = [
     { label: 'Total Vehicles', value: '156', icon: 'fas fa-truck', color: 'blue' },
@@ -277,9 +261,6 @@ export function renderFleet() {
   `;
 }
 
-// ============================================
-// DRIVER MANAGEMENT
-// ============================================
 export function renderDrivers() {
   const cards = driversData.map(d => `
     <div class="driver-card">
@@ -326,9 +307,6 @@ export function renderDrivers() {
   `;
 }
 
-// ============================================
-// ROUTES & TRACKING
-// ============================================
 export function renderRoutes() {
   const routeCards = routesData.map(r => `
     <div class="card animate-in" style="margin-bottom:16px">
@@ -385,9 +363,6 @@ export function renderRoutes() {
   `;
 }
 
-// ============================================
-// WAREHOUSES / HUBS
-// ============================================
 export function renderWarehouses() {
   const cards = warehousesData.map(w => {
     const capColor = w.capacity >= 85 ? 'danger' : w.capacity >= 65 ? 'warning' : '';
@@ -450,9 +425,6 @@ export function renderWarehouses() {
   `;
 }
 
-// ============================================
-// PROOF OF DELIVERY
-// ============================================
 export function renderPOD() {
   const cards = podData.map(p => `
     <div class="pod-card">
@@ -495,9 +467,6 @@ export function renderPOD() {
   `;
 }
 
-// ============================================
-// BILLING & INVOICES
-// ============================================
 export function renderBilling() {
   const summaryCards = [
     { label: 'Total Revenue', value: '₹2,38,15,000', icon: 'fas fa-chart-line', color: 'green', bg: 'var(--success-bg)' },
@@ -567,9 +536,6 @@ export function renderBilling() {
   `;
 }
 
-// ============================================
-// REPORTS
-// ============================================
 export function renderReports() {
   const barData = [
     { label: 'Mon', value: 85 },

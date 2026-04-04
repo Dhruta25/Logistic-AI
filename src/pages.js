@@ -808,3 +808,306 @@ export function renderSettings() {
     </div>
   `;
 }
+
+// ============================================
+// AI COPILOT - Decision Support Interface
+// ============================================
+export function renderCopilot() {
+  const scenarioButtons = [
+    { label: '🌧️ Rainy Bike Delivery', id: 0 },
+    { label: '🚛 Long-Haul Truck', id: 1 },
+    { label: '⚡ Express EV', id: 2 },
+    { label: '⛈️ Storm Alert', id: 3 },
+    { label: '📦 Heavy Package', id: 4 },
+  ];
+
+  const scenarioHtml = scenarioButtons.map(s => `
+    <button class="copilot-scenario-btn" data-scenario="${s.id}" id="scenario-${s.id}">${s.label}</button>
+  `).join('');
+
+  return `
+    <div class="page-header">
+      <div>
+        <h1 style="display:flex;align-items:center;gap:12px">
+          <span class="copilot-logo-icon"><i class="fas fa-robot"></i></span>
+          AI Copilot
+          <span class="copilot-badge-live"><i class="fas fa-circle" style="font-size:6px"></i> Live</span>
+        </h1>
+        <div class="subtitle">Intelligent delivery analysis & decision support system</div>
+      </div>
+      <div class="page-header-actions">
+        <button class="btn btn-secondary" id="btnCopilotHistory"><i class="fas fa-history"></i> History</button>
+        <button class="btn btn-primary" id="btnCopilotReset"><i class="fas fa-refresh"></i> New Analysis</button>
+      </div>
+    </div>
+
+    <div class="copilot-layout">
+      <!-- LEFT: Input Panel -->
+      <div class="copilot-input-panel">
+        <div class="card animate-in">
+          <div class="card-header" style="border-bottom:none;padding-bottom:8px">
+            <span class="card-title"><i class="fas fa-terminal"></i> Delivery Data Input</span>
+          </div>
+          <div class="card-body" style="padding-top:8px">
+            <!-- Natural Language Input -->
+            <div class="copilot-nl-input">
+              <div class="copilot-input-wrapper">
+                <i class="fas fa-sparkles copilot-input-icon"></i>
+                <textarea id="copilotQuery" placeholder="Describe your delivery scenario... e.g. 'Analyze a 200km truck delivery in rainy weather via delhivery in west region'" rows="3"></textarea>
+              </div>
+              <button class="btn btn-primary copilot-analyze-btn" id="btnAnalyze">
+                <i class="fas fa-bolt"></i> Analyze
+              </button>
+            </div>
+
+            <!-- Quick Scenarios -->
+            <div class="copilot-scenarios">
+              <div class="copilot-section-label"><i class="fas fa-zap"></i> Quick Scenarios</div>
+              <div class="copilot-scenario-grid">${scenarioHtml}</div>
+            </div>
+
+            <!-- Structured Form -->
+            <div class="copilot-form-toggle" id="copilotFormToggle">
+              <i class="fas fa-sliders"></i> Advanced Input
+              <i class="fas fa-chevron-down copilot-toggle-arrow" id="toggleArrow"></i>
+            </div>
+
+            <div class="copilot-form" id="copilotForm" style="display:none">
+              <div class="copilot-form-grid">
+                <div class="copilot-field">
+                  <label>Distance (km)</label>
+                  <input type="number" id="fieldDistance" placeholder="e.g. 200" value="" />
+                </div>
+                <div class="copilot-field">
+                  <label>Vehicle Type</label>
+                  <select id="fieldVehicle">
+                    <option value="truck">🚛 Truck</option>
+                    <option value="van">🚐 Van</option>
+                    <option value="ev van">⚡ EV Van</option>
+                    <option value="bike">🏍️ Bike</option>
+                    <option value="three wheeler">🛺 Three Wheeler</option>
+                  </select>
+                </div>
+                <div class="copilot-field">
+                  <label>Weather</label>
+                  <select id="fieldWeather">
+                    <option value="clear">☀️ Clear</option>
+                    <option value="cold">❄️ Cold</option>
+                    <option value="hot">🌡️ Hot</option>
+                    <option value="rainy">🌧️ Rainy</option>
+                    <option value="foggy">🌫️ Foggy</option>
+                    <option value="stormy">⛈️ Stormy</option>
+                  </select>
+                </div>
+                <div class="copilot-field">
+                  <label>Delivery Mode</label>
+                  <select id="fieldMode">
+                    <option value="standard">📦 Standard</option>
+                    <option value="two day">📅 Two Day</option>
+                    <option value="next day">🗓️ Next Day</option>
+                    <option value="express">🚀 Express</option>
+                    <option value="same day">⚡ Same Day</option>
+                  </select>
+                </div>
+                <div class="copilot-field">
+                  <label>Region</label>
+                  <select id="fieldRegion">
+                    <option value="north">North</option>
+                    <option value="south">South</option>
+                    <option value="east">East</option>
+                    <option value="west">West</option>
+                    <option value="central">Central</option>
+                    <option value="north-east">North-East</option>
+                  </select>
+                </div>
+                <div class="copilot-field">
+                  <label>Package Weight (kg)</label>
+                  <input type="number" id="fieldWeight" placeholder="e.g. 20" value="" />
+                </div>
+                <div class="copilot-field">
+                  <label>Delivery Partner</label>
+                  <select id="fieldPartner">
+                    <option value="delhivery">Delhivery</option>
+                    <option value="dhl">DHL</option>
+                    <option value="bluedart">BlueDart</option>
+                    <option value="xpressbees">XpressBees</option>
+                    <option value="shadowfax">Shadowfax</option>
+                    <option value="ecom">Ecom</option>
+                    <option value="fedex">FedEx</option>
+                    <option value="dtdc">DTDC</option>
+                  </select>
+                </div>
+                <div class="copilot-field">
+                  <label>Package Type</label>
+                  <input type="text" id="fieldPackageType" placeholder="e.g. electronics" value="" />
+                </div>
+              </div>
+              <button class="btn btn-primary copilot-analyze-btn" id="btnAnalyzeForm" style="width:100%;margin-top:16px">
+                <i class="fas fa-brain"></i> Run Analysis
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results Panel -->
+      <div class="copilot-results-panel" id="copilotResults">
+        <div class="copilot-empty-state animate-in">
+          <div class="copilot-empty-icon">
+            <i class="fas fa-robot"></i>
+            <div class="copilot-pulse-ring"></div>
+            <div class="copilot-pulse-ring delay"></div>
+          </div>
+          <h3>Ready to Analyze</h3>
+          <p>Enter delivery data or select a quick scenario to get AI-powered insights, recommendations, and what-if simulations.</p>
+          <div class="copilot-features">
+            <div class="copilot-feature"><i class="fas fa-gauge-high"></i> Delay Risk Assessment</div>
+            <div class="copilot-feature"><i class="fas fa-lightbulb"></i> Smart Recommendations</div>
+            <div class="copilot-feature"><i class="fas fa-flask"></i> What-If Simulations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Renders the copilot analysis result into beautiful cards
+ */
+export function renderCopilotResult(result) {
+  const delayVal = parseInt(result.analysis.delay_risk);
+  const gaugeColor = delayVal >= 65 ? '#EF4444' : delayVal >= 35 ? '#F59E0B' : '#10B981';
+  const gaugeGradient = delayVal >= 65 ? 'linear-gradient(135deg, #EF4444, #DC2626)' : delayVal >= 35 ? 'linear-gradient(135deg, #F59E0B, #D97706)' : 'linear-gradient(135deg, #10B981, #059669)';
+  const priorityColor = result.priority_level === 'High' ? 'danger' : result.priority_level === 'Medium' ? 'warning' : 'success';
+
+  const issuesHtml = result.analysis.key_issues.map(issue => `
+    <div class="copilot-issue">
+      <i class="fas fa-exclamation-circle" style="color:${gaugeColor}"></i>
+      <span>${issue}</span>
+    </div>
+  `).join('');
+
+  const recsHtml = result.recommendations.map((rec, i) => `
+    <div class="copilot-rec-card" style="animation-delay:${0.1 + i * 0.08}s">
+      <div class="copilot-rec-icon"><i class="fas ${rec.icon || 'fa-lightbulb'}"></i></div>
+      <div class="copilot-rec-content">
+        <div class="copilot-rec-action">${rec.action}</div>
+        <div class="copilot-rec-impact"><i class="fas fa-chart-line"></i> ${rec.impact}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const simsHtml = result.what_if_simulation.map((sim, i) => `
+    <div class="copilot-sim-card" style="animation-delay:${0.2 + i * 0.08}s">
+      <div class="copilot-sim-scenario">
+        <i class="fas fa-flask"></i>
+        <span>${sim.scenario}</span>
+      </div>
+      <div class="copilot-sim-result">
+        <i class="fas fa-arrow-right"></i>
+        <span>${sim.result}</span>
+      </div>
+    </div>
+  `).join('');
+
+  const circumference = 2 * Math.PI * 54;
+  const offset = circumference - (delayVal / 100) * circumference;
+
+  return `
+    <div class="copilot-result-wrapper stagger">
+      <!-- Summary Banner -->
+      <div class="copilot-summary-banner animate-in" style="--accent:${gaugeColor}">
+        <div class="copilot-summary-left">
+          <div class="badge badge-${priorityColor}" style="font-size:12px;padding:4px 14px;margin-bottom:8px">
+            <i class="fas fa-flag"></i> ${result.priority_level} Priority
+          </div>
+          <div class="copilot-summary-text">${result.summary}</div>
+        </div>
+        <div class="copilot-gauge">
+          <svg viewBox="0 0 120 120" class="copilot-gauge-svg">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="${gaugeColor}" stroke-width="8"
+              stroke-dasharray="${circumference}"
+              stroke-dashoffset="${offset}"
+              stroke-linecap="round"
+              transform="rotate(-90 60 60)"
+              class="copilot-gauge-fill"/>
+          </svg>
+          <div class="copilot-gauge-label">
+            <span class="copilot-gauge-value" style="color:${gaugeColor}">${delayVal}%</span>
+            <span class="copilot-gauge-sublabel">Delay Risk</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis Stats -->
+      <div class="copilot-stats-row animate-in" style="animation-delay:0.1s">
+        <div class="copilot-stat-card">
+          <div class="copilot-stat-icon blue"><i class="fas fa-clock"></i></div>
+          <div class="copilot-stat-value">${result.analysis.estimated_time}</div>
+          <div class="copilot-stat-label">Estimated Time</div>
+        </div>
+        <div class="copilot-stat-card">
+          <div class="copilot-stat-icon ${priorityColor === 'danger' ? 'red' : priorityColor === 'warning' ? 'yellow' : 'green'}"><i class="fas fa-gauge-high"></i></div>
+          <div class="copilot-stat-value">${result.analysis.delay_risk}</div>
+          <div class="copilot-stat-label">Delay Probability</div>
+        </div>
+        <div class="copilot-stat-card">
+          <div class="copilot-stat-icon purple"><i class="fas fa-brain"></i></div>
+          <div class="copilot-stat-value">${result._meta.speed_kmh} km/h</div>
+          <div class="copilot-stat-label">Avg Speed</div>
+        </div>
+      </div>
+
+      <!-- Explanation -->
+      <div class="card animate-in" style="animation-delay:0.15s">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-magnifying-glass-chart"></i> Analysis Explanation</span>
+        </div>
+        <div class="card-body">
+          <div class="copilot-explanation">${result.explanation}</div>
+          <div class="copilot-issues-list" style="margin-top:16px">
+            <div class="copilot-section-label" style="margin-bottom:10px"><i class="fas fa-triangle-exclamation"></i> Key Issues Identified</div>
+            ${issuesHtml}
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="card animate-in" style="animation-delay:0.2s">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-lightbulb"></i> Recommendations</span>
+          <span style="font-size:12px;color:var(--text-secondary)">${result.recommendations.length} actions</span>
+        </div>
+        <div class="card-body" style="padding:12px">
+          <div class="copilot-recs-grid">${recsHtml}</div>
+        </div>
+      </div>
+
+      <!-- What-If Simulations -->
+      <div class="card animate-in" style="animation-delay:0.25s">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-flask"></i> What-If Simulations</span>
+          <span style="font-size:12px;color:var(--text-secondary)">${result.what_if_simulation.length} scenarios</span>
+        </div>
+        <div class="card-body" style="padding:12px">
+          <div class="copilot-sims-grid">${simsHtml}</div>
+        </div>
+      </div>
+
+      <!-- JSON Output Toggle -->
+      <div class="card animate-in" style="animation-delay:0.3s">
+        <div class="card-header copilot-json-header" id="copilotJsonToggle" style="cursor:pointer">
+          <span class="card-title"><i class="fas fa-code"></i> Raw JSON Response</span>
+          <i class="fas fa-chevron-down" id="jsonToggleArrow" style="color:var(--text-tertiary);font-size:12px;transition:transform 0.2s"></i>
+        </div>
+        <div class="card-body" id="copilotJsonBody" style="display:none">
+          <pre class="copilot-json-output">${JSON.stringify(
+            { summary: result.summary, analysis: result.analysis, explanation: result.explanation, recommendations: result.recommendations, what_if_simulation: result.what_if_simulation, priority_level: result.priority_level },
+            null, 2
+          )}</pre>
+        </div>
+      </div>
+    </div>
+  `;
+}

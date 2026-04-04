@@ -7,9 +7,11 @@ import 'jspdf-autotable';
 import {
   renderDashboard, renderOrders, renderDispatch, renderFleet,
   renderDrivers, renderRoutes, renderWarehouses, renderPOD,
-  renderBilling, renderReports, renderAIOps, renderSettings
+  renderBilling, renderReports, renderAIOps, renderSettings,
+  renderCopilot, renderCopilotResult
 } from './pages.js';
 import { ordersData, mapVehicles, fleetData, invoicesData, driversData, routesData } from './data.js';
+import { analyzeDelivery, SAMPLE_SCENARIOS, parseNaturalQuery } from './copilot.js';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -21,6 +23,7 @@ L.Icon.Default.mergeOptions({
 // --- Navigation Configuration ---
 const navItems = [
   { key: 'dashboard', icon: 'fas fa-th-large', label: 'Dashboard' },
+  { key: 'copilot', icon: 'fas fa-robot', label: 'AI Copilot', badge: 'AI', badgeClass: 'ai' },
   { key: 'fleet', icon: 'fas fa-truck-moving', label: 'Fleet' },
   { key: 'routes', icon: 'fas fa-route', label: 'Routes' },
   { key: 'orders', icon: 'fas fa-boxes-stacked', label: 'Shipments', badge: '10' },
@@ -30,6 +33,7 @@ const navItems = [
 
 const pageRenderers = {
   dashboard: renderDashboard,
+  copilot: renderCopilot,
   orders: renderOrders,
   dispatch: renderDispatch,
   fleet: renderFleet,
@@ -95,6 +99,7 @@ function navigateTo(page) {
     if (page === 'routes') initRoutesMap();
     if (page === 'pod') initPODUpload();
     if (page === 'reports') animateChartBars();
+    if (page === 'copilot') initCopilotInteractions();
 
     // Global button handlers after render
     initButtonHandlers(page);
@@ -959,6 +964,188 @@ function animateChartBars() {
     bar.style.height = '0px';
     setTimeout(() => { bar.style.height = height; }, 100);
   });
+}
+
+// ============================================
+// AI COPILOT INTERACTIONS
+// ============================================
+function initCopilotInteractions() {
+  // Form toggle
+  const formToggle = document.getElementById('copilotFormToggle');
+  const form = document.getElementById('copilotForm');
+  const toggleArrow = document.getElementById('toggleArrow');
+  if (formToggle && form) {
+    formToggle.addEventListener('click', () => {
+      const isHidden = form.style.display === 'none';
+      form.style.display = isHidden ? 'block' : 'none';
+      if (toggleArrow) toggleArrow.style.transform = isHidden ? 'rotate(180deg)' : '';
+    });
+  }
+
+  // Natural language analysis
+  bindClick('btnAnalyze', () => {
+    const query = document.getElementById('copilotQuery')?.value;
+    if (!query || query.trim().length === 0) {
+      showToast('Please enter a delivery scenario description', 'warning');
+      return;
+    }
+    const parsed = parseNaturalQuery(query);
+    const data = {
+      distance_km: parsed.distance_km || 150,
+      vehicle_type: parsed.vehicle_type || 'truck',
+      weather_condition: parsed.weather_condition || 'clear',
+      delivery_mode: parsed.delivery_mode || 'standard',
+      region: parsed.region || 'north',
+      package_weight_kg: parsed.package_weight_kg || 15,
+      delivery_partner: parsed.delivery_partner || 'delhivery',
+      package_type: 'general',
+    };
+    runCopilotAnalysis(data);
+  });
+
+  // Textarea enter key
+  const queryEl = document.getElementById('copilotQuery');
+  if (queryEl) {
+    queryEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('btnAnalyze')?.click();
+      }
+    });
+  }
+
+  // Form analysis
+  bindClick('btnAnalyzeForm', () => {
+    const data = {
+      distance_km: parseInt(document.getElementById('fieldDistance')?.value) || 150,
+      vehicle_type: document.getElementById('fieldVehicle')?.value || 'truck',
+      weather_condition: document.getElementById('fieldWeather')?.value || 'clear',
+      delivery_mode: document.getElementById('fieldMode')?.value || 'standard',
+      region: document.getElementById('fieldRegion')?.value || 'north',
+      package_weight_kg: parseFloat(document.getElementById('fieldWeight')?.value) || 15,
+      delivery_partner: document.getElementById('fieldPartner')?.value || 'delhivery',
+      package_type: document.getElementById('fieldPackageType')?.value || 'general',
+    };
+    runCopilotAnalysis(data);
+  });
+
+  // Quick scenarios
+  document.querySelectorAll('.copilot-scenario-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.scenario);
+      const scenario = SAMPLE_SCENARIOS[idx];
+      if (scenario) {
+        // Highlight selected
+        document.querySelectorAll('.copilot-scenario-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        runCopilotAnalysis(scenario.data);
+      }
+    });
+  });
+
+  // Reset
+  bindClick('btnCopilotReset', () => {
+    const results = document.getElementById('copilotResults');
+    if (results) {
+      results.innerHTML = `
+        <div class="copilot-empty-state animate-in">
+          <div class="copilot-empty-icon">
+            <i class="fas fa-robot"></i>
+            <div class="copilot-pulse-ring"></div>
+            <div class="copilot-pulse-ring delay"></div>
+          </div>
+          <h3>Ready to Analyze</h3>
+          <p>Enter delivery data or select a quick scenario to get AI-powered insights.</p>
+          <div class="copilot-features">
+            <div class="copilot-feature"><i class="fas fa-gauge-high"></i> Delay Risk Assessment</div>
+            <div class="copilot-feature"><i class="fas fa-lightbulb"></i> Smart Recommendations</div>
+            <div class="copilot-feature"><i class="fas fa-flask"></i> What-If Simulations</div>
+          </div>
+        </div>
+      `;
+    }
+    document.querySelectorAll('.copilot-scenario-btn').forEach(b => b.classList.remove('active'));
+    const queryField = document.getElementById('copilotQuery');
+    if (queryField) queryField.value = '';
+    showToast('Analysis cleared', 'info');
+  });
+
+  // History
+  bindClick('btnCopilotHistory', () => {
+    showToast('Analysis history coming soon!', 'info');
+  });
+}
+
+function runCopilotAnalysis(data) {
+  const resultsPanel = document.getElementById('copilotResults');
+  if (!resultsPanel) return;
+
+  // Show loading state
+  resultsPanel.innerHTML = `
+    <div class="copilot-loading animate-in">
+      <div class="copilot-loading-spinner">
+        <div class="copilot-spinner-ring"></div>
+        <i class="fas fa-brain copilot-spinner-icon"></i>
+      </div>
+      <h3>Analyzing Delivery Data...</h3>
+      <p>Computing delay risk, generating recommendations, and running simulations</p>
+      <div class="copilot-loading-steps">
+        <div class="copilot-loading-step active"><i class="fas fa-database"></i> Processing input data</div>
+        <div class="copilot-loading-step"><i class="fas fa-brain"></i> Running AI models</div>
+        <div class="copilot-loading-step"><i class="fas fa-flask"></i> Generating simulations</div>
+      </div>
+    </div>
+  `;
+
+  // Simulate analysis steps
+  const steps = resultsPanel.querySelectorAll('.copilot-loading-step');
+  setTimeout(() => {
+    if (steps[0]) steps[0].classList.add('done');
+    if (steps[1]) steps[1].classList.add('active');
+  }, 400);
+  setTimeout(() => {
+    if (steps[1]) { steps[1].classList.add('done'); steps[1].classList.remove('active'); }
+    if (steps[2]) steps[2].classList.add('active');
+  }, 900);
+
+  // Run actual analysis
+  setTimeout(() => {
+    try {
+      const result = analyzeDelivery(data);
+      resultsPanel.innerHTML = renderCopilotResult(result);
+
+      // JSON toggle
+      const jsonToggle = document.getElementById('copilotJsonToggle');
+      const jsonBody = document.getElementById('copilotJsonBody');
+      const jsonArrow = document.getElementById('jsonToggleArrow');
+      if (jsonToggle && jsonBody) {
+        jsonToggle.addEventListener('click', () => {
+          const hidden = jsonBody.style.display === 'none';
+          jsonBody.style.display = hidden ? 'block' : 'none';
+          if (jsonArrow) jsonArrow.style.transform = hidden ? 'rotate(180deg)' : '';
+        });
+      }
+
+      // Animate gauge
+      setTimeout(() => {
+        const gaugeFill = resultsPanel.querySelector('.copilot-gauge-fill');
+        if (gaugeFill) gaugeFill.classList.add('animate');
+      }, 100);
+
+      showToast(`Analysis complete — ${result.priority_level} priority`, result.priority_level === 'High' ? 'warning' : 'success');
+    } catch (err) {
+      resultsPanel.innerHTML = `
+        <div class="copilot-empty-state">
+          <div class="copilot-empty-icon" style="color:var(--danger)">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h3>Analysis Error</h3>
+          <p>${err.message}</p>
+        </div>
+      `;
+      showToast('Analysis failed: ' + err.message, 'error');
+    }
+  }, 1400);
 }
 
 function showToast(message, type = 'info') {

@@ -1,5 +1,6 @@
 
 import './style.css';
+import './agentStyles.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { jsPDF } from 'jspdf';
@@ -10,6 +11,7 @@ import {
   renderBilling, renderReports, renderAIOps, renderSettings,
   renderCopilot, renderCopilotResult
 } from './pages.js';
+import { renderAgentHub, initAgentHub } from './agentDashboard.js';
 import { ordersData, mapVehicles, fleetData, invoicesData, driversData, routesData } from './data.js';
 import { analyzeDelivery, SAMPLE_SCENARIOS, parseNaturalQuery } from './copilot.js';
 
@@ -23,6 +25,7 @@ L.Icon.Default.mergeOptions({
 // --- Navigation Configuration ---
 const navItems = [
   { key: 'dashboard', icon: 'fas fa-th-large', label: 'Dashboard' },
+  { key: 'agent-hub', icon: 'fas fa-network-wired', label: 'Agent Hub', badge: 'NEW', badgeClass: 'ai' },
   { key: 'copilot', icon: 'fas fa-robot', label: 'AI Copilot', badge: 'AI', badgeClass: 'ai' },
   { key: 'fleet', icon: 'fas fa-truck-moving', label: 'Fleet' },
   { key: 'routes', icon: 'fas fa-route', label: 'Routes' },
@@ -33,6 +36,7 @@ const navItems = [
 
 const pageRenderers = {
   dashboard: renderDashboard,
+  'agent-hub': renderAgentHub,
   copilot: renderCopilot,
   orders: renderOrders,
   dispatch: renderDispatch,
@@ -93,13 +97,18 @@ function navigateTo(page) {
     content.scrollTop = 0;
 
     // Post-render hooks
-    if (page === 'dashboard') initDashboardMap();
-    if (page === 'orders') initOrdersInteractions();
-    if (page === 'dispatch') initKanbanDragDrop();
-    if (page === 'routes') initRoutesMap();
-    if (page === 'pod') initPODUpload();
-    if (page === 'reports') animateChartBars();
-    if (page === 'copilot') initCopilotInteractions();
+    setTimeout(() => {
+      if (page === 'dashboard') {
+        initDashboardMap();
+      } else if (page === 'agent-hub') {
+        initAgentHub(mapInstances);
+      } else if (page === 'orders') initOrdersInteractions();
+      else if (page === 'dispatch') initKanbanDragDrop();
+      else if (page === 'routes') initRoutesMap();
+      else if (page === 'pod') initPODUpload();
+      else if (page === 'reports') animateChartBars();
+      else if (page === 'copilot') initCopilotInteractions();
+    }, 50);
 
     // Global button handlers after render
     initButtonHandlers(page);

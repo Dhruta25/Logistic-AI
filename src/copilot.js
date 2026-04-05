@@ -1,9 +1,3 @@
-// ============================================
-// LOGISTICS AI COPILOT ENGINE
-// ============================================
-// Client-side decision-support engine that analyzes
-// delivery data, computes delay risk, and generates
-// structured recommendations with what-if simulations.
 
 const VEHICLE_SPEED_MAP = {
   bike: { clear: 30, rainy: 18, foggy: 22, cold: 25, hot: 28, stormy: 12 },

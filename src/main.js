@@ -9,9 +9,11 @@ import {
   renderDashboard, renderOrders, renderDispatch, renderFleet,
   renderDrivers, renderRoutes, renderWarehouses, renderPOD,
   renderBilling, renderReports, renderAIOps, renderSettings,
-  renderCopilot, renderCopilotResult
+  renderCopilot, renderCopilotResult,
+  renderLanding, renderProfile
 } from './pages.js';
 import { renderAgentHub, initAgentHub } from './agentDashboard.js';
+import { initLogisticsGlobe } from './globe.js';
 import { ordersData, mapVehicles, fleetData, invoicesData, driversData, routesData } from './data.js';
 import { analyzeDelivery, SAMPLE_SCENARIOS, parseNaturalQuery } from './copilot.js';
 
@@ -35,6 +37,8 @@ const navItems = [
 ];
 
 const pageRenderers = {
+  landing: renderLanding,
+  profile: renderProfile,
   dashboard: renderDashboard,
   'agent-hub': renderAgentHub,
   copilot: renderCopilot,
@@ -83,6 +87,21 @@ function buildSidebar() {
 function navigateTo(page) {
   currentPage = page;
 
+  // Protect routes natively
+  const isAuthenticated = localStorage.getItem('auth_token');
+  if (!isAuthenticated && page !== 'landing') {
+    page = 'landing';
+    currentPage = 'landing';
+  }
+
+  if (page === 'landing') {
+    document.body.classList.add('landing-active');
+    document.body.classList.add('auth-active'); // hide sidebar and app layout
+  } else {
+    document.body.classList.remove('landing-active');
+    document.body.classList.remove('auth-active');
+  }
+
   Object.values(mapInstances).forEach(m => { try { m.remove(); } catch (e) { } });
   mapInstances = {};
 
@@ -98,7 +117,9 @@ function navigateTo(page) {
 
     // Post-render hooks
     setTimeout(() => {
-      if (page === 'dashboard') {
+      if (page === 'landing') initLandingInteractions();
+      else if (page === 'profile') initProfileInteractions();
+      else if (page === 'dashboard') {
         initDashboardMap();
       } else if (page === 'agent-hub') {
         initAgentHub(mapInstances);
@@ -403,6 +424,137 @@ function exportTableCSV(data, keys, filename) {
   a.click();
   URL.revokeObjectURL(url);
   showToast(`Downloaded ${filename}`, 'success');
+}
+
+// --- AUTH LOGIC ---
+let vantaEffect = null;
+
+function cleanupLandingBg() {
+  if (vantaEffect) {
+    vantaEffect.destroy();
+    vantaEffect = null;
+  }
+}
+
+function initLandingInteractions() {
+  cleanupLandingBg();
+  if (window.VANTA && window.VANTA.NET) {
+    vantaEffect = window.VANTA.NET({
+      el: "#vanta-bg",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x3b82f6,
+      backgroundColor: 0x050510,
+      points: 12.00,
+      maxDistance: 22.00,
+      spacing: 18.00,
+      showDots: true
+    });
+  }
+
+  // Smooth scrolling for navigation
+  document.querySelectorAll('.landing-nav-center a').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        document.querySelector('.landing-content').scrollTo({
+          top: targetElement.offsetTop - 80,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+
+  // Modal logic
+  const modalContainer = document.getElementById('authModal');
+  const overlay = document.getElementById('authOverlay');
+  const title = modalContainer.querySelector('.auth-title');
+  const submitBtn = modalContainer.querySelector('button[type="submit"]');
+
+  const modalNameGroup = document.getElementById('modalNameGroup');
+  const modalPassStrength = document.getElementById('modalPassStrength');
+  const modalPassStrengthFill = document.getElementById('modalPassStrengthFill');
+  const modalPassword = document.getElementById('modalPassword');
+
+  document.querySelectorAll('.auth-trigger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.type || 'login';
+      if (type === 'signup') {
+        title.innerHTML = 'Register <span class="text-primary">System</span>';
+        submitBtn.innerHTML = 'Create Account';
+        modalNameGroup.style.display = 'block';
+        modalPassStrength.style.display = 'block';
+      } else {
+         title.innerHTML = 'Welcome Back';
+         submitBtn.innerHTML = 'Sign In';
+         modalNameGroup.style.display = 'none';
+         modalPassStrength.style.display = 'none';
+      }
+      modalContainer.classList.add('active');
+      overlay.classList.add('active');
+    });
+  });
+
+  // Password strength logic
+  modalPassword.addEventListener('input', (e) => {
+    const val = e.target.value;
+    let strength = 0;
+    if (val.length > 5) strength += 33;
+    if (val.match(/[A-Z]/)) strength += 33;
+    if (val.match(/[0-9]/) || val.match(/[^A-Za-z0-9]/)) strength += 34;
+
+    modalPassStrengthFill.style.width = strength + '%';
+    if (strength < 40) {
+      modalPassStrengthFill.style.background = '#ef4444'; // Red
+    } else if (strength < 80) {
+      modalPassStrengthFill.style.background = '#f59e0b'; // Yellow
+    } else {
+      modalPassStrengthFill.style.background = '#10b981'; // Green
+    }
+  });
+
+  const closeModal = () => {
+    modalContainer.classList.remove('active');
+    overlay.classList.remove('active');
+  };
+
+  document.getElementById('closeAuthModal')?.addEventListener('click', closeModal);
+  overlay.addEventListener('click', closeModal);
+
+  // Form submit Mock
+  const form = document.getElementById('landingAuthForm');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('modalEmail').value;
+      const pwd = document.getElementById('modalPassword').value;
+      if (email && pwd) {
+        localStorage.setItem('auth_token', 'mock_jwt_token_4042');
+        showToast('System validation successful. Logging in...', 'success');
+        closeModal();
+        cleanupLandingBg();
+        setTimeout(() => navigateTo('dashboard'), 600);
+      }
+    });
+  }
+}
+
+function initProfileInteractions() {
+  const logoutBtn = document.getElementById('btnLogout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('auth_token');
+      showToast('Session terminated.', 'info');
+      navigateTo('landing');
+    });
+  }
 }
 
 function exportDashboardPDF() {
@@ -1206,9 +1358,17 @@ function init() {
   initNotifications();
   initGlobalSearch();
   startRealTimeSimulation();
+  
+  // Navigate to profile when clicking profile items
+  document.getElementById('userProfile')?.addEventListener('click', () => navigateTo('profile'));
+  document.querySelector('.sidebar-user')?.addEventListener('click', () => navigateTo('profile'));
 
   setTimeout(() => {
-    showToast('Welcome back, Alex! 5 new alerts.', 'info');
+    if (localStorage.getItem('auth_token')) {
+      const userStr = localStorage.getItem('auth_user');
+      const user = userStr ? JSON.parse(userStr) : { name: "Alex" };
+      showToast(`System online. Welcome back, ${user.name.split(' ')[0]}.`, 'info');
+    }
   }, 1000);
 }
 

@@ -1111,3 +1111,226 @@ export function renderCopilotResult(result) {
     </div>
   `;
 }
+
+export function renderLanding() {
+  return `
+    <div class="landing-page">
+      <!-- Animated Background Container -->
+      <div id="vanta-bg" class="landing-bg"></div>
+
+      <!-- NAVBAR -->
+      <nav class="landing-nav">
+        <div class="landing-nav-left">
+          <a href="#hero" style="text-decoration:none; color:inherit;">
+            <h2 class="landing-logo"><i class="fas fa-diamond" style="color:var(--primary);margin-right:8px;"></i>LogiMind <span class="text-primary">AI</span></h2>
+          </a>
+        </div>
+        <div class="landing-nav-center">
+          <a href="#hero">Home</a>
+          <a href="#features">Features</a>
+          <a href="#services">Services</a>
+          <a href="#demo">Demo</a>
+          <a href="#team">Team</a>
+        </div>
+        <div class="landing-nav-right">
+          <button class="btn btn-text auth-trigger" data-type="login">Login</button>
+          <button class="btn btn-primary auth-trigger" data-type="signup">Sign Up</button>
+        </div>
+      </nav>
+
+      <div class="landing-content">
+        <!-- HERO SECTION -->
+        <section id="hero" class="landing-section hero-section">
+          <div class="pill-container">
+             <span class="landing-pill">Smart Routing</span>
+             <span class="landing-pill">Live Tracking</span>
+             <span class="landing-pill">AI Predictions</span>
+          </div>
+          <h1 class="landing-headline">Meet Your AI<br/>Logistics System</h1>
+          <p class="landing-subtext">Real-time tracking, AI-powered route optimization, and delay prediction in one unified platform.</p>
+        </section>
+
+        <!-- FEATURE CARDS (GRID) -->
+        <section id="features" class="landing-section features-section">
+          <div class="feature-grid">
+            <div class="feature-card">
+               <div class="feature-icon"><i class="fas fa-truck"></i><span class="feature-badge">Module</span></div>
+               <h3>FleetTracker</h3>
+               <p>Track vehicles in real-time across routes</p>
+            </div>
+            <div class="feature-card">
+               <div class="feature-icon"><i class="fas fa-route"></i><span class="feature-badge">Module</span></div>
+               <h3>RouteOptimizer</h3>
+               <p>AI-powered route planning for efficiency</p>
+            </div>
+            <div class="feature-card">
+               <div class="feature-icon"><i class="fas fa-exclamation-triangle"></i><span class="feature-badge">Module</span></div>
+               <h3>DelayPredictor</h3>
+               <p>Predict delays before they happen</p>
+            </div>
+            <div class="feature-card highlighted-card">
+               <div class="feature-icon"><i class="fas fa-robot"></i><span class="feature-badge alert-badge">AI Chatbot</span></div>
+               <h3>Logistics Assistant</h3>
+               <p>Interact with your entire logistic network via natural language.</p>
+               <div class="feature-chat-snippet">"Where is shipment #8042?" &rarr;</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECOND SECTION: TYPOGRAPHY/STATS -->
+        <section id="services" class="landing-section split-section">
+          <div class="split-left">
+            <h2 class="split-heading">Logistics Is Complex</h2>
+            <p class="split-desc">Supply chains are struggling under the weight of fragmentation and reactive management.</p>
+            <div class="stats-list">
+              <div class="stat-item"><span class="stat-number">30%</span> <span class="stat-text">deliveries face delays</span></div>
+              <div class="stat-item"><span class="stat-number">20%</span> <span class="stat-text">fuel wasted due to poor routing</span></div>
+              <div class="stat-item"><span class="stat-number">1 in 3</span> <span class="stat-text">shipments arrive late</span></div>
+            </div>
+          </div>
+          <div class="split-right">
+            <div class="split-label">UNIFIED INTELLIGENCE</div>
+            <h2 class="landing-headline">One AI.<br/>All Logistics.</h2>
+            <p class="split-desc">A unified AI system that understands routes, predicts risks, and optimizes deliveries in real time.</p>
+            <div class="pill-container" style="justify-content:flex-start; margin-top: 24px; flex-wrap:wrap">
+               <span class="landing-pill">FleetTracker</span>
+               <span class="landing-pill">RouteOptimizer</span>
+               <span class="landing-pill">DelayPredictor</span>
+               <span class="landing-pill">Assistant</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- INTERACTIVE DEMO SECTION -->
+        <section id="demo" class="landing-section split-section">
+          <div class="split-left">
+            <div class="split-label">LIVE OPTIMIZATION</div>
+            <h2 class="landing-headline">Route Optimization<br/>in Action</h2>
+            <p class="split-desc" style="max-width:400px">Optimize delivery routes instantly and reduce delays across fleets.</p>
+          </div>
+          <div class="split-right">
+            <div class="demo-chat-box">
+               <div class="demo-chat-header">
+                 <div class="mac-dots"><span></span><span></span><span></span></div>
+                 <div class="chat-title">AI Route Optimizer</div>
+               </div>
+               <div class="demo-chat-body">
+                 <div class="chat-bubble user">I need to optimize the route from Kolkata to Bhubaneswar</div>
+                 <div class="chat-bubble ai">Analyzing traffic, weather, and fleet availability...</div>
+                 <div class="chat-bubble ai highlight-bubble">Fastest route selected via NH16.</div>
+                 <div class="chat-bubble ai">Estimated delivery time: 6 hours.<br/>Traffic delay risk: <span style="color:#10b981">Low</span></div>
+               </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TEAM SECTION -->
+        <section id="team" class="landing-section team-section" style="text-align:center;">
+          <div class="split-label">OUR TEAM</div>
+          <h2 class="landing-headline" style="font-size:48px; margin-bottom: 40px;">Meet the Innovators</h2>
+          <div class="feature-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 800px; margin: 0 auto; gap: 40px;">
+            <div class="feature-card" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+               <div class="feature-icon" style="width:80px; height:80px; border-radius:50%; font-size:32px; background: rgba(59,130,246,0.2);">
+                 <i class="fas fa-user-astronaut"></i>
+               </div>
+               <h3>Dhruta</h3>
+               <p style="color:var(--primary-light)">AI Lead & Architect</p>
+               <p style="margin-top:12px; font-size:13px;">Specializes in next-gen predictive algorithms and infrastructure scaling.</p>
+            </div>
+            <div class="feature-card" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+               <div class="feature-icon" style="width:80px; height:80px; border-radius:50%; font-size:32px; background: rgba(236,72,153,0.2); color:#EC4899;">
+                 <i class="fas fa-user-ninja"></i>
+               </div>
+               <h3>Saloni</h3>
+               <p style="color:#f472b6">Product & Deployment Expert</p>
+               <p style="margin-top:12px; font-size:13px;">Mastermind behind the user experience and global fleet integration systems.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- FINAL CTA SECTION -->
+        <section id="cta" class="landing-section cta-section">
+          <h2 class="landing-headline text-center">Experience the Future<br/>of Logistics</h2>
+          <p class="landing-subtext" style="margin-bottom:40px">Join the waitlist to be among the first to access the unified logistics intelligence.</p>
+          <div class="cta-buttons">
+            <button class="btn btn-primary" style="padding: 16px 32px; font-size:16px;">Join Waitlist &rarr;</button>
+            <button class="btn btn-secondary" style="padding: 16px 32px; font-size:16px;">Request Demo</button>
+          </div>
+          <div class="footer-links">
+             <span>Built with <i class="fas fa-heart text-primary"></i> by Ai Engineers</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- MODAL OVERLAY (Initially Hidden) -->
+      <div id="authOverlay" class="auth-modal-overlay"></div>
+      <div id="authModal" class="auth-modal-container">
+        <div class="auth-glass-panel">
+          <button id="closeAuthModal" class="close-btn"><i class="fas fa-times"></i></button>
+          <h2 class="auth-title">Welcome Back</h2>
+          <p class="auth-subtitle">LogiMind Platform Access</p>
+          <form id="landingAuthForm" class="auth-form">
+            <div class="form-group" id="modalNameGroup" style="display:none;">
+              <input type="text" id="modalName" class="auth-input" placeholder="Full Name"/>
+            </div>
+            <div class="form-group">
+              <input type="email" id="modalEmail" class="auth-input" placeholder="Email Address" required value="demo@logimind.ai"/>
+            </div>
+            <div class="form-group">
+              <input type="password" id="modalPassword" class="auth-input" placeholder="Password" required value="admin123"/>
+            </div>
+            <div class="password-strength" id="modalPassStrength" style="display:none; margin-bottom: 16px;">
+              <div id="modalPassStrengthFill" class="strength-fill" style="height:4px; width:0%; border-radius:2px; transition:all 0.3s; background:var(--border);"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px; font-size:12px; color:var(--text-secondary)">
+              <a href="#">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary auth-btn auth-btn-premium" style="margin-bottom:16px; width:100%">Sign In</button>
+            <div style="text-align:center; font-size:12px; color:var(--text-secondary); margin-bottom:16px;">Or sign in with</div>
+            <button type="button" class="btn btn-secondary auth-btn" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width="16" height="16"> Sign in with Google
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+export function renderProfile() {
+  const userStr = localStorage.getItem('auth_user');
+  const user = userStr ? JSON.parse(userStr) : { name: "Operator", email: "user@logimind.ai", id: "LGM-8042-XF" };
+  const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+
+  return `
+    <div class="page-header" style="justify-content:center;">
+      <div style="text-align:center;">
+        <h1>Operator Profile</h1>
+        <div class="subtitle">System Identity and Clearances</div>
+      </div>
+    </div>
+    <div class="profile-container animate-in">
+      <div class="profile-card">
+        <div class="profile-avatar-wrapper">
+          <div class="profile-avatar-large">${initials}</div>
+        </div>
+        <h2 class="profile-name">${user.name}</h2>
+        <div class="profile-role">Level 4 Clearance</div>
+        
+        <div class="profile-details">
+          <div class="profile-detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-val">${user.email}</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="detail-label">System ID</span>
+            <span class="detail-val" style="font-family:monospace;color:var(--text-secondary)">${user.id || 'LGM-8042-XF'}</span>
+          </div>
+        </div>
+
+        <button id="btnLogout" class="btn btn-logout auth-btn">TERMINATE SESSION</button>
+      </div>
+    </div>
+  `;
+}

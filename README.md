@@ -288,6 +288,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ## 👩‍💻 Author
 
 **Dhruta** — [@Dhruta25](https://github.com/Dhruta25)
+**Saloni** - [@saloni](https://github.com/saloni259)
 
 ---
 
